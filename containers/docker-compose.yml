@@ -1,0 +1,51 @@
+version: '2'
+
+networks: 
+  node-network:
+  web-network:
+  mongo-network:
+
+services:
+  container-node:
+    build: "./node"
+    container_name: container-node
+    volumes:
+      - ../dist/api:/app
+      - ../dist/api/ssl:/app/ssl
+#      - ../server/ssl:/ssl
+#      - ../server/package.json:/app/package.json
+#      - ../server/.foreverignore:/app/.foreverignore
+#      - ../server/run.sh:/app/run.sh
+    networks:
+      - node-network
+      - web-network
+      - mongo-network
+    command: bash /app/run.sh
+
+  container-mongo:
+    build: "./mongo"
+    container_name: container-mongo
+    volumes:
+      - ../data/mongo/db:/data/db
+    networks:
+      - mongo-network
+    depends_on:
+      - container-node
+
+  container-web:
+    container_name: container-web
+    build: "./nginx"
+    volumes:
+      # Site
+      - ../dist/web:/var/www
+      - ./nginx/ssl:/etc/nginx/ssl
+      # Configuração do proxy reverso
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - web-network
+      - node-network
+    depends_on:
+      - container-mongo

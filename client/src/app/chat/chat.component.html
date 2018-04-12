@@ -1,0 +1,79 @@
+<div class="mini-popup-box" *ngIf="!chatOpened" [ngClass]="{'popup-box-on': !chatOpened}">
+  <div class="popup-head">
+    <div class="popup-head-left pull-left">
+      <img class="img-fluid" src="assets/images/avatar/fabio.png"> Fábio
+    </div>
+    <div class="popup-head-right pull-right">
+      <button class="chat-header-button pull-right" type="button" (click)="callChat()">
+        <i class="fa fa-commenting-o" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="popup-box" [ngClass]="{'popup-box-on': chatOpened}">
+  <div class="popup-head">
+    <div class="popup-head-left pull-left">
+      <img class="img-fluid" src="assets/images/avatar/fabio.png"> Fábio
+    </div>
+    <div class="popup-head-right pull-right">
+      <button class="chat-header-button pull-right" type="button"
+              (click)="callChat()"><i class="fa fa-times" aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <div class="popup-messages">
+    <div class="direct-chat-messages" *ngIf="!iniciado">
+      <form class="form-inline" novalidate [formGroup]="formUser" (ngSubmit)="init(); $event.preventDefault()">
+        <div class="form-group">
+          <label>Username:</label>
+          <input class="form-control" type="text" formControlName="username" [readonly]="iniciado">
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-dark" [disabled]="formUser.invalid || iniciado">Entrar</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="direct-chat-messages" *ngIf="iniciado">
+
+      <div class="chat-box-single-line">
+        <abbr class="timestamp">Olá {{user.name}}</abbr>
+      </div>
+      <ul class="list-unstyled">
+        <li *ngFor="let mess of messages" style="padding-bottom: 2px">
+          <div class="direct-chat-msg doted-border">
+            <div class="direct-chat-info clearfix">
+              <span class="direct-chat-name pull-left">{{user.name}}</span>
+            </div>
+            <img [src]="user.avatar" class="direct-chat-img"><!-- /.direct-chat-img -->
+            <div class="direct-chat-text">
+              {{mess.content}}
+            </div>
+            <div class="direct-chat-info clearfix">
+              <span class="direct-chat-timestamp pull-right">{{dateNow()}}</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <hr>
+  <div class="popup-messages-footer" *ngIf="iniciado" style="padding: 5px">
+    <form novalidate [formGroup]="form" (ngSubmit)="onSubmit(); $event.preventDefault()">
+      <textarea formControlName="message" class="form-control"></textarea>
+      <button class="btn btn-outline-secondary btn-block" type="submit" [disabled]="form.invalid || !iniciado">Enviar
+      </button>
+
+      <div class="btn-footer">
+        <button class="bg_none" [disabled]="true"><i class="fa fa-upload" aria-hidden="true"></i></button>
+        <button class="bg_none" [disabled]="true"><i class="fa fa-download" aria-hidden="true"></i></button>
+        <button class="bg_none pull-right" [disabled]="true"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
